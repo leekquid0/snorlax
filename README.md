@@ -1,6 +1,6 @@
 <div align="center">
   
-# Welcome to Snorlax's Cave!
+<h1 style="color:cyan">Welcome <span style='color:green'>t<span style="color:#6fe813">o</span></span> Snorlax's Cave!</h1>
 Snorlax's Cave is a UV built proxy and game site **(v1.0 Release)**
 </div>
 
@@ -12,20 +12,7 @@ Snorlax's Cave is a UV built proxy and game site **(v1.0 Release)**
 
 ## Join our community!
 <a align="center" href="(https://discord.gg/snorlaxscave)">
-    <img src="https://invidget.switchblade.xyz/snorlaxscave?theme=dark"/>
 </a>
-
-## Local Hosting
-
-```bash
-git clone https://github.com/SPS-Services/Snorlaxs-Cave-v1.git
-```
-```bash
-cd snorlaxs cave
-```
-```bash
-node index.js
-```
 
 
 ## Hosting
