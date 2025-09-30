@@ -1,0 +1,27 @@
+# Cloudflare Pages Redirects
+# Place this file in your output directory (static/)
+
+# Example: Redirect old URLs to new ones
+/old-url   /new-url   301
+
+# Home page
+/           /index.html   200
+
+# Main sections
+ /Games      /Games.html   200
+ /Apps       /Apps.html    200
+ /About      /About.html   200
+ /Settings   /Settings.html 200
+ /Proxy      /Proxy.html   200
+
+# People secrets
+/bigfoot    /people-secrets/bigfoot.html 200
+/burb       /people-secrets/burb.html 200
+/cats       /people-secrets/cats.html 200
+/derpman    /people-secrets/derpman.html 200
+/fowntain   /people-secrets/fowntain.html 200
+/snorlax    /people-secrets/snorlax.html 200
+/tlochsta   /people-secrets/tlochsta.html 200
+
+# 404 page
+/*          /404.html   404

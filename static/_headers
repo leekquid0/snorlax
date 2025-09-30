@@ -1,0 +1,7 @@
+/* Example: Add custom headers for all files */
+/* Place this file in your output directory (static/) */
+
+/*
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
+*/
