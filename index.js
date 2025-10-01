@@ -1,6 +1,5 @@
 
 // Cloudflare Worker script using @cloudflare/kv-asset-handler for static assets
-import { getAssetFromKV } from '@cloudflare/kv-asset-handler';
 
 const ROUTES = {
   '/': '/index.html',
@@ -21,22 +20,28 @@ const ROUTES = {
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    let event = { request };
-    let customPath = ROUTES[url.pathname];
-    if (customPath) {
-      // Rewrite to static file
-      event.request = new Request(new URL('/static' + customPath, url), request);
+    let assetPath = null;
+    if (ROUTES[url.pathname]) {
+      assetPath = '/static' + ROUTES[url.pathname];
+    } else if (url.pathname.startsWith('/static/')) {
+      assetPath = url.pathname;
     }
-    try {
-      return await getAssetFromKV(event);
-    } catch (e) {
-      // Serve 404.html if not found
-      try {
-        event.request = new Request(new URL('/static/404.html', url), request);
-        return await getAssetFromKV(event);
-      } catch (e2) {
-        return new Response('Not found', { status: 404 });
+
+    if (assetPath) {
+      // Rewrite request to the static asset and fetch from ASSETS binding
+      const assetRequest = new Request(new URL(assetPath, url), request);
+      const assetResponse = await env.ASSETS.fetch(assetRequest);
+      if (assetResponse.status !== 404) {
+        return assetResponse;
       }
     }
+
+    // Try to serve static/404.html if not found
+    const notFoundRequest = new Request(new URL('/static/404.html', url), request);
+    const notFoundResponse = await env.ASSETS.fetch(notFoundRequest);
+    if (notFoundResponse.status !== 404) {
+      return notFoundResponse;
+    }
+    return new Response('Not found', { status: 404 });
   },
 };
