@@ -1,72 +1,86 @@
+import express from "express";
+import http from "node:http";
+import createBareServer from "@tomphttp/bare-server-node";
+import path from "node:path";
+import * as dotenv from "dotenv";
+dotenv.config();
 
-// Cloudflare Worker script using @cloudflare/kv-asset-handler for static assets
+const __dirname = process.cwd();
+const server = http.createServer();
+const app = express(server);
+const bareServer = createBareServer("/bare/");
 
-const ROUTES = {
-  '/': '/index.html',
-  '/science': '/Proxy.html',
-  '/math': '/Games.html',
-  '/english': '/Apps.html',
-  '/about': '/About.html',
-  '/settings': '/Settings.html',
-  '/snorlax': '/people-secrets/snorlax.html',
-  '/tlochsta': '/people-secrets/tlochsta.html',
-  '/fowntain': '/people-secrets/fowntain.html',
-  '/bigfoot': '/people-secrets/bigfoot.html',
-  '/burb': '/people-secrets/burb.html',
-  '/derpman': '/people-secrets/derpman.html',
-  '/cats': '/people-secrets/cats.html',
-};
+app.use(express.json());
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
 
-function log(msg) {
-  // Use console.log if available, otherwise do nothing
-  if (typeof console !== 'undefined' && console.log) {
-    console.log(msg);
+app.use(express.static(path.join(__dirname, "static")));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "index.html"));
+});
+app.get("/science", (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "Proxy.html"));
+});
+app.get("/math", (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "Games.html"));
+});
+app.get("/english", (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "Apps.html"));
+});
+app.get("/about", (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "About.html"));
+});
+app.get("/settings", (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "Settings.html"));
+});
+app.get("/snorlax", (req, res) => {
+  res.sendFile(path.join(__dirname, "static/people-secrets/", "snorlax.html"));
+});
+app.get("/tlochsta", (req, res) => {
+  res.sendFile(path.join(__dirname, "static/people-secrets/", "tlochsta.html"));
+});
+app.get("/fowntain", (req, res) => {
+  res.sendFile(path.join(__dirname, "static/people-secrets/", "fowntain.html"));
+});
+app.get("/bigfoot", (req, res) => {
+  res.sendFile(path.join(__dirname, "static/people-secrets/", "bigfoot.html"));
+});
+app.get("/burb", (req, res) => {
+  res.sendFile(path.join(__dirname, "static/people-secrets/", "burb.html"));
+});
+app.get("/derpman", (req, res) => {
+  res.sendFile(path.join(__dirname, "static/people-secrets/", "derpman.html"));
+});
+app.get("/cats", (req, res) => {
+  res.sendFile(path.join(__dirname, "static/people-secrets/", "cats.html"));
+});
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(__dirname, "static", "404.html"));
+});
+
+server.on("request", (req, res) => {
+  if (bareServer.shouldRoute(req)) {
+    bareServer.routeRequest(req, res);
+  } else {
+    app(req, res);
   }
-}
+});
 
-export default {
-  async fetch(request, env, ctx) {
-    try {
-      const url = new URL(request.url);
-      let assetPath = null;
-      if (ROUTES[url.pathname]) {
-        assetPath = '/static' + ROUTES[url.pathname];
-      } else if (url.pathname.startsWith('/static/')) {
-        assetPath = url.pathname;
-      }
+server.on("upgrade", (req, socket, head) => {
+  if (bareServer.shouldRoute(req)) {
+    bareServer.routeUpgrade(req, socket, head);
+  } else {
+    socket.end();
+  }
+});
 
-      log(`env.ASSETS present: ${!!env.ASSETS}`);
-      log(`Request pathname: ${url.pathname}`);
-      log(`Resolved assetPath: ${assetPath}`);
+server.on("listening", () => {
+  console.log(`Snorlax's Cave listening on port 8080 ${process.env.PORT}`);
+});
 
-      if (assetPath && env.ASSETS) {
-        const assetRequest = new Request(new URL(assetPath, url), request);
-        log(`Fetching asset: ${assetPath}`);
-        const assetResponse = await env.ASSETS.fetch(assetRequest);
-        log(`Asset response status: ${assetResponse.status}`);
-        if (assetResponse.status !== 404) {
-          return assetResponse;
-        }
-      }
-
-      // Try to serve static/404.html if not found
-      if (env.ASSETS) {
-        const notFoundRequest = new Request(new URL('/static/404.html', url), request);
-        log('Fetching 404.html');
-        const notFoundResponse = await env.ASSETS.fetch(notFoundRequest);
-        log(`404.html response status: ${notFoundResponse.status}`);
-        if (notFoundResponse.status !== 404) {
-          return notFoundResponse;
-        }
-      } else {
-        log('env.ASSETS is undefined!');
-      }
-      log('Returning raw 404 response');
-      return new Response('Not found', { status: 404 });
-    } catch (err) {
-      log('Exception thrown in fetch handler:');
-      log(err && err.stack ? err.stack : err);
-      return new Response('Internal Error: ' + (err && err.message ? err.message : err), { status: 500 });
-    }
-  },
-};
+server.listen({
+  port: process.env.PORT,
+});
