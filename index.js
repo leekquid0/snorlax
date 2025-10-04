@@ -54,7 +54,7 @@ app.get("/burb", (req, res) => {
 app.get("/derpman", (req, res) => {
   res.sendFile(path.join(__dirname, "static/people-secrets/", "derpman.html"));
 });
-app.get("/cats", (req, res) => {
+app.get("/cats", (_req, res) => {
   res.sendFile(path.join(__dirname, "static/people-secrets/", "cats.html"));
 });
 app.get("/*", (req, res) => {
