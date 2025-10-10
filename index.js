@@ -3,6 +3,7 @@ import http from "node:http";
 import createBareServer from "@tomphttp/bare-server-node";
 import path from "node:path";
 import * as dotenv from "dotenv";
+import fs from "node:fs";
 dotenv.config();
 
 const __dirname = process.cwd();
@@ -57,6 +58,19 @@ app.get("/derpman", (req, res) => {
 app.get("/cats", (_req, res) => {
   res.sendFile(path.join(__dirname, "static/people-secrets/", "cats.html"));
 });
+
+
+app.post("/api/location", (req, res) => {
+  const { address, latitude, longitude } = req.body;
+  const logLine = `${new Date().toISOString()} | Address: ${address} | Latitude: ${latitude} | Longitude: ${longitude}\n`;
+  fs.appendFile(path.join(__dirname, "location_logs.txt"), logLine, err => {
+    if (err) {
+      return res.status(500).json({ success: false, error: "Failed to log location." });
+    }
+    res.json({ success: true });
+  });
+});
+
 app.get("/*", (req, res) => {
   res.sendFile(path.join(__dirname, "static", "404.html"));
 });
