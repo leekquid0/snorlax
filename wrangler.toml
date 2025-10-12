@@ -1,8 +1,7 @@
 
 name = "snorlaxcave"
-main = "index.mjs"
-compatibility_date = "2025-10-01"
-type = "javascript"
+main = "index.js"
+compatibility_date = "2025-10-12"
 
 [site]
 bucket = "./static"
