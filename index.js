@@ -92,7 +92,7 @@ server.on("upgrade", (req, socket, head) => {
 });
 
 server.on("listening", () => {
-  console.log(`Snorlax's Cave listening on port 8080 ${process.env.PORT}`);
+  console.log(`Snorlax's Cave listening on port ${process.env.PORT}`);
 });
 
 server.listen({
