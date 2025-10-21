@@ -20,6 +20,16 @@ function gim () {
 }
 
 
+function codepen () {
+
+    window.navigator.serviceWorker.register('/sw.js', {
+        scope: __uv$config.prefix
+    }).then(() => {
+        location.href=__uv$config.prefix + __uv$config.encodeUrl('https://codepen.io/');
+    });
+
+}
+
 function awake () {
 
     window.navigator.serviceWorker.register('/sw.js', {
